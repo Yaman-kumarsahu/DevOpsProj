@@ -2,7 +2,7 @@
 FROM python:3.13
 
 # Step 2: Set the working directory inside the container
-WORKDIR /dev-ops-proj
+WORKDIR /DevOpsProj
 
 # Step 3: Copy the requirements.txt file into the container
 COPY requirements.txt .
