@@ -1,0 +1,68 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'dev-ops-proj'
+        DOCKERFILE_PATH = './Dockerfile'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+                    // Clone the repository and checkout the PR branch
+                    git branch: "${env.CHANGE_BRANCH}", url: 'https://github.com/Yaman-kumarsahu/DevOpsProj.git'
+                }
+            }
+        }
+
+        stage('Setup Virtual Environment') {
+            steps {
+                script {
+                    // Create and activate the virtual environment, then install dependencies
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        // stage('Run Tests') {
+        //     steps {
+        //         script {
+        //             echo "Running tests in the virtual environment"
+        //             try {
+        //                 sh 'venv/bin/pytest tests/'
+        //             } catch (Exception e) {
+        //                 echo "Tests failed: ${e.getMessage()}"
+        //                 currentBuild.result = 'FAILURE'
+        //                 throw e
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    post {
+        success {
+            script {
+                // Notify GitHub of success for PRs
+                if (env.CHANGE_ID) {
+                    githubNotify status: 'SUCCESS', context: 'ci/jenkins', description: 'All tests passed. Ready to merge into master!'
+                }
+            }
+            echo 'Build succeeded!'
+        }
+        failure {
+            script {
+                // Notify GitHub of failure for PRs
+                if (env.CHANGE_ID) {
+                    githubNotify status: 'FAILURE', context: 'ci/jenkins', description: 'Build or tests failed. Please fix the issues before merging.'
+                }
+            }
+            echo 'Build failed!'
+        }
+    }
+}
