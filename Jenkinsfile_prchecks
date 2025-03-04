@@ -11,7 +11,8 @@ pipeline {
             steps {
                 script {
                     // Clone the repository and checkout the PR branch
-                    git branch: "${env.CHANGE_BRANCH}", url: 'https://github.com/Yaman-kumarsahu/DevOpsProj.git'
+                    def branchName = "${params.BRANCH_NAME ?: 'main'}"
+                    git branch: branchName, url: 'https://github.com/Yaman-kumarsahu/DevOpsProj.git'
                 }
             }
         }
