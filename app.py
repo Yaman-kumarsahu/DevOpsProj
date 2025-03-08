@@ -11,12 +11,6 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    """
-    Handles the '/' route. This function returns a simple greeting.
-    
-    Returns:
-        str: A greeting message.
-    """
     return 'Hello, Yaman!'
 
 if __name__ == '__main__':
