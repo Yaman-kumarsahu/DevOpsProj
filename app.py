@@ -1,4 +1,10 @@
 # app.py
+
+"""
+This module contains the main application logic for the Flask API.
+It initializes the Flask app, sets up routes, and handles requests.
+"""
+
 from flask import Flask
 
 app = Flask(__name__)
