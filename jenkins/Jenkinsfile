@@ -6,8 +6,8 @@ pipeline {
             steps {
                 script {
                     // Trigger multiple Jenkins pipelines
+                    build job: 'DevOpsProj-QualityGate', wait: false
                     build job: 'DevOpsProj-PRCheck', wait: false
-                    build job: 'DevOpsProj-build', wait: false
                 }
             }
         }
