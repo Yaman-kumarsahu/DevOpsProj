@@ -1,3 +1,10 @@
+# Import necessary modules
+from flask import Flask, render_template, request, session, redirect, url_for
+from flask_socketio import SocketIO, send, join_room, leave_room
+import logging
+import random
+from string import ascii_uppercase
+
 # Create Flask app and SocketIO instance
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "Yaman@123"
