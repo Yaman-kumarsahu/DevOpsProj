@@ -30,28 +30,14 @@ pipeline {
             }
         }
 
-<<<<<<< Updated upstream
-        // stage('Run Tests') {
-        //     steps {
-        //         script {
-        //             echo "Running tests in the virtual environment"
-        //             try {
-        //                 sh 'venv/bin/pytest tests/'
-        //             } catch (Exception e) {
-        //                 echo "Tests failed: ${e.getMessage()}"
-        //                 currentBuild.result = 'FAILURE'
-        //                 throw e
-        //             }
-        //         }
-        //     }
-        // }
-=======
         stage('Run Tests') {
             steps {
                 script {
                     echo "Running tests in the virtual environment"
                     try {
+
                         sh '. venv/bin/activate && pytest tests/'
+
                     } catch (Exception e) {
                         echo "Tests failed: ${e.getMessage()}"
                         currentBuild.result = 'FAILURE'
@@ -60,7 +46,6 @@ pipeline {
                 }
             }
         }
->>>>>>> Stashed changes
     }
 
     post {
