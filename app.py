@@ -65,6 +65,7 @@ logger = configure_logger()
 # Log every incoming HTTP request
 @app.before_request
 def log_request():
+
     """
     Logs each incoming HTTP request with details such as the remote address,
     request date, method, URL, and user agent.
@@ -130,7 +131,7 @@ def home():
     return render_template("home.html")
 
 @app.route("/room")
-def create_room():
+def room():
     """
     Displays the room page and ensures the user is in a valid room session.
     """
@@ -162,9 +163,11 @@ def message(data):
 
 @socketio.on("connect")
 def connect():
+
     """
     Handles a new connection from a user, ensuring they have a valid room and name.
     """
+
     room = session.get("room")
     name = session.get("name")
     if not room or not name:
