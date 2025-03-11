@@ -48,9 +48,9 @@ pipeline {
                 script {
                     // Run your tests inside the Docker container
                     // Assuming you have pytest installed in the container
-                    docker.image(${DOCKER_IMAGE}).inside {
+                    // docker.image(${DOCKER_IMAGE}).inside {
                         sh 'pytest tests/*.py'
-                    }
+                    // }
                 }
             }
         }
