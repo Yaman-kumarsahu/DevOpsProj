@@ -61,3 +61,12 @@
 2025-03-09 17:16:09,245 - FlaskApp - INFO - User hhkhk is in room SLSQ
 2025-03-09 17:16:09,261 - FlaskApp - INFO - 127.0.0.1 - - [None] "GET http://localhost:5000/static/css/style.css Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
 2025-03-09 17:16:09,277 - FlaskApp - INFO - hhkhk joined room SLSQ
+2025-03-11 22:04:39,023 - FlaskApp - INFO - 127.0.0.1 - - [None] "GET http://localhost:5000/ Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+2025-03-11 22:04:39,071 - FlaskApp - INFO - 127.0.0.1 - - [None] "GET http://localhost:5000/static/css/style.css Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+2025-03-11 22:04:41,449 - FlaskApp - INFO - 127.0.0.1 - - [None] "POST http://localhost:5000/ Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+2025-03-11 22:04:41,454 - FlaskApp - INFO - Created a new room with code HPAJ
+2025-03-11 22:04:41,454 - FlaskApp - INFO - User adf joined room HPAJ
+2025-03-11 22:04:41,457 - FlaskApp - INFO - 127.0.0.1 - - [None] "GET http://localhost:5000/room Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+2025-03-11 22:04:41,457 - FlaskApp - INFO - User adf is in room HPAJ
+2025-03-11 22:04:41,470 - FlaskApp - INFO - 127.0.0.1 - - [None] "GET http://localhost:5000/static/css/style.css Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
+2025-03-11 22:04:41,482 - FlaskApp - INFO - adf joined room HPAJ
