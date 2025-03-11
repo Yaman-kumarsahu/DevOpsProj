@@ -30,6 +30,7 @@ pipeline {
             }
         }
 
+<<<<<<< Updated upstream
         // stage('Run Tests') {
         //     steps {
         //         script {
@@ -44,6 +45,22 @@ pipeline {
         //         }
         //     }
         // }
+=======
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests in the virtual environment"
+                    try {
+                        sh '. venv/bin/activate && pytest tests/'
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.getMessage()}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+>>>>>>> Stashed changes
     }
 
     post {
