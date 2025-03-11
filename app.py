@@ -126,12 +126,12 @@ def home():
         session["room"] = room
         session["name"] = name
         logger.info("User %s joined room %s", name, room)
-        return redirect(url_for("room"))
+        return redirect(url_for("create_room"))
 
     return render_template("home.html")
 
 @app.route("/room")
-def room():
+def create_room():
     """
     Displays the room page and ensures the user is in a valid room session.
     """
