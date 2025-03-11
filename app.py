@@ -1,9 +1,20 @@
-# Import necessary modules
-from flask import Flask, render_template, request, session, redirect, url_for
-from flask_socketio import SocketIO, send, join_room, leave_room
+"""
+This module implements a simple Flask app with SocketIO functionality
+for creating and joining rooms, sending messages, and handling user connections.
+It also includes logging functionality to track activities and errors.
+"""
+
+# Standard imports
 import logging
 import random
 from string import ascii_uppercase
+
+# Third-party imports
+from flask import Flask, render_template, request, session, redirect, url_for
+from flask_socketio import SocketIO, send, join_room, leave_room
+
+# Initialize the rooms dictionary to store room information
+rooms = {}
 
 # Create Flask app and SocketIO instance
 app = Flask(__name__)
@@ -29,13 +40,13 @@ def configure_logger(logger=None):
 
         # Add file handler to the logger
         logger.addHandler(file_handler)
-        
+
         # Add a stream handler to log to console as well (optional)
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.DEBUG)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
-    
+
     return logger
 
 # Initialize logger
@@ -44,18 +55,19 @@ logger = configure_logger()
 # Log every incoming HTTP request
 @app.before_request
 def log_request():
-    logger.info(f"{request.remote_addr} - - [{request.date}] \"{request.method} {request.url} {request.environ.get('HTTP_USER_AGENT', '')}\"")
+    logger.info("%s - - [%s] \"%s %s %s\"",
+                request.remote_addr,
+                request.date,
+                request.method,
+                request.url,
+                request.environ.get('HTTP_USER_AGENT', ''))
 
 # Room generation function
 def generate_unique_code(length):
     while True:
-        code = ""
-        for _ in range(length):
-            code += random.choice(ascii_uppercase)
-        
+        code = "".join(random.choice(ascii_uppercase) for _ in range(length))
         if code not in rooms:
             break
-    
     return code
 
 @app.route("/", methods=["POST", "GET"])
@@ -68,25 +80,25 @@ def home():
         create = request.form.get("create", False)
 
         if not name:
-            logger.warning(f"User attempted to join without a name")
+            logger.warning("User attempted to join without a name")
             return render_template("home.html", error="Please enter a name.", code=code, name=name)
 
-        if join != False and not code:
-            logger.warning(f"User attempted to join without a room code")
+        if join is not False and not code:
+            logger.warning("User attempted to join without a room code")
             return render_template("home.html", error="Please enter a room code.", code=code, name=name)
-        
+
         room = code
-        if create != False:
+        if create is not False:
             room = generate_unique_code(4)
             rooms[room] = {"members": 0, "messages": []}
-            logger.info(f"Created a new room with code {room}")
+            logger.info("Created a new room with code %s", room)
         elif code not in rooms:
-            logger.warning(f"Room {code} does not exist")
+            logger.warning("Room %s does not exist", code)
             return render_template("home.html", error="Room does not exist.", code=code, name=name)
-        
+
         session["room"] = room
         session["name"] = name
-        logger.info(f"User {name} joined room {room}")
+        logger.info("User %s joined room %s", name, room)
         return redirect(url_for("room"))
 
     return render_template("home.html")
@@ -98,40 +110,40 @@ def room():
         logger.warning("User tried to access a room without a valid session")
         return redirect(url_for("home"))
 
-    logger.info(f"User {session.get('name')} is in room {room}")
+    logger.info("User %s is in room %s", session.get("name"), room)
     return render_template("room.html", code=room, messages=rooms[room]["messages"])
 
 @socketio.on("message")
 def message(data):
     room = session.get("room")
     if room not in rooms:
-        logger.error(f"Message received in an invalid room {room}")
-        return 
-    
+        logger.error("Message received in an invalid room %s", room)
+        return
+
     content = {
         "name": session.get("name"),
         "message": data["data"]
     }
     send(content, to=room)
     rooms[room]["messages"].append(content)
-    logger.info(f"Message from {session.get('name')} in room {room}: {data['data']}")
+    logger.info("Message from %s in room %s: %s", session.get('name'), room, data['data'])
 
 @socketio.on("connect")
-def connect(auth):
+def connect():
     room = session.get("room")
     name = session.get("name")
     if not room or not name:
-        logger.warning(f"User connected without a valid room or name")
+        logger.warning("User connected without a valid room or name")
         return
     if room not in rooms:
         leave_room(room)
-        logger.error(f"Room {room} no longer exists, user will be disconnected")
+        logger.error("Room %s no longer exists, user will be disconnected", room)
         return
-    
+
     join_room(room)
     send({"name": name, "message": "has entered the room"}, to=room)
     rooms[room]["members"] += 1
-    logger.info(f"{name} joined room {room}")
+    logger.info("%s joined room %s", name, room)
 
 @socketio.on("disconnect")
 def disconnect():
@@ -143,10 +155,10 @@ def disconnect():
         rooms[room]["members"] -= 1
         if rooms[room]["members"] <= 0:
             del rooms[room]
-        logger.info(f"{name} left room {room}, members remaining: {rooms[room]['members']}")
-    
+        logger.info("%s left room %s, members remaining: %d", name, room, rooms[room]["members"])
+
     send({"name": name, "message": "has left the room"}, to=room)
-    logger.info(f"{name} has left room {room}")
+    logger.info("%s has left room %s", name, room)
 
 if __name__ == "__main__":
     socketio.run(app, debug=True)
