@@ -31,22 +31,22 @@ pipeline {
             }
         }
 
-       // stage('Run Tests') {
-         //   steps {
-           //     script {
-             //       echo "Running tests in the virtual environment"
-               //     try {
-//
-                 //       sh '. venv/bin/activate && pytest tests/'
-//
-  //                  } catch (Exception e) {
+    //    stage('Run Tests') {
+    //        steps {
+    //            script {
+    //                echo "Running tests in the virtual environment"
+    //                try {
+
+    //                    sh '. venv/bin/activate && pytest tests/'
+
+    //                } catch (Exception e) {
     //                    echo "Tests failed: ${e.getMessage()}"
-      //                  currentBuild.result = 'FAILURE'
-        //                throw e
-          //          }
-            //    }
-            //}
-        //}
+    //                    currentBuild.result = 'FAILURE'
+    //                    throw e
+    //                }
+    //            }
+    //         }
+    //     }
     }
 
     post {
