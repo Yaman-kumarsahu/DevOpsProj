@@ -4,6 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'dev-ops-proj'
         DOCKERFILE_PATH = './Dockerfile'
+        PATH = "/usr/local/bin:$PATH"  // Add Docker path to Jenkins environment
     }
 
     stages {
