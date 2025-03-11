@@ -24,6 +24,16 @@ socketio = SocketIO(app)
 
 # Function to configure logging (can be passed custom logger for testing)
 def configure_logger(logger=None):
+    """
+    Configures a logger for the application, adding both file and console handlers.
+    If a logger is passed, it will use that, otherwise, a new one is created.
+
+    Args:
+        logger (logging.Logger, optional): The custom logger to configure.
+
+    Returns:
+        logging.Logger: The configured logger instance.
+    """
     if logger is None:
         logger = logging.getLogger("FlaskApp")
 
@@ -55,6 +65,11 @@ logger = configure_logger()
 # Log every incoming HTTP request
 @app.before_request
 def log_request():
+
+    """
+    Logs each incoming HTTP request with details such as the remote address,
+    request date, method, URL, and user agent.
+    """
     logger.info("%s - - [%s] \"%s %s %s\"",
                 request.remote_addr,
                 request.date,
@@ -64,6 +79,15 @@ def log_request():
 
 # Room generation function
 def generate_unique_code(length):
+    """
+    Generates a unique code for the room using uppercase letters.
+
+    Args:
+        length (int): The length of the code to be generated.
+
+    Returns:
+        str: A unique room code.
+    """
     while True:
         code = "".join(random.choice(ascii_uppercase) for _ in range(length))
         if code not in rooms:
@@ -72,6 +96,9 @@ def generate_unique_code(length):
 
 @app.route("/", methods=["POST", "GET"])
 def home():
+    """
+    Handles the home route where users can create a new room or join an existing one.
+    """
     session.clear()
     if request.method == "POST":
         name = request.form.get("name")
@@ -105,6 +132,9 @@ def home():
 
 @app.route("/room")
 def room():
+    """
+    Displays the room page and ensures the user is in a valid room session.
+    """
     room = session.get("room")
     if room is None or session.get("name") is None or room not in rooms:
         logger.warning("User tried to access a room without a valid session")
@@ -115,6 +145,9 @@ def room():
 
 @socketio.on("message")
 def message(data):
+    """
+    Handles incoming messages from clients and broadcasts them to the room.
+    """
     room = session.get("room")
     if room not in rooms:
         logger.error("Message received in an invalid room %s", room)
@@ -130,6 +163,11 @@ def message(data):
 
 @socketio.on("connect")
 def connect():
+
+    """
+    Handles a new connection from a user, ensuring they have a valid room and name.
+    """
+
     room = session.get("room")
     name = session.get("name")
     if not room or not name:
@@ -147,6 +185,9 @@ def connect():
 
 @socketio.on("disconnect")
 def disconnect():
+    """
+    Handles a user's disconnection from the room, updating the room member count.
+    """
     room = session.get("room")
     name = session.get("name")
     leave_room(room)
