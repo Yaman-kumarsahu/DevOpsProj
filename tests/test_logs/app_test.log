@@ -1,5 +1,5 @@
-2025-03-14 16:03:03,419 - INFO - 127.0.0.1 - - [None] "POST http://localhost/ Werkzeug/3.1.3"
-2025-03-14 16:03:03,419 - INFO - Created a new room with code RBGQ
-2025-03-14 16:03:03,419 - INFO - User LoggerTest joined room RBGQ
-2025-03-14 16:03:03,423 - INFO - 127.0.0.1 - - [None] "POST http://localhost/ Werkzeug/3.1.3"
-2025-03-14 16:03:03,423 - WARNING - User attempted to join without a name
+2025-03-14 16:22:55,798 - INFO - 127.0.0.1 - - [None] "POST http://localhost/ Werkzeug/3.1.3"
+2025-03-14 16:22:55,798 - INFO - Created a new room with code PUII
+2025-03-14 16:22:55,798 - INFO - User LoggerTest joined room PUII
+2025-03-14 16:22:55,806 - INFO - 127.0.0.1 - - [None] "POST http://localhost/ Werkzeug/3.1.3"
+2025-03-14 16:22:55,806 - WARNING - User attempted to join without a name
