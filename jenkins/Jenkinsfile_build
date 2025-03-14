@@ -6,7 +6,7 @@ pipeline {
         DOCKER_IMAGE = 'dev-ops-proj'
         DOCKERFILE_PATH = './Dockerfile'  // Path to your Dockerfile
         PATH = "/usr/local/bin:$PATH"  // Add Docker path to Jenkins environment
-        }
+    }
 
     stages {
         stage('Clone Repository') {
@@ -16,7 +16,20 @@ pipeline {
             }
         }
         
-         stage('Check Docker Version') {
+        stage('Setup Virtual Environment') {
+            steps {
+                script {
+                    // Create and activate the virtual environment
+                    sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Check Docker Version') {
             steps {
                 script {
                     // Verify Docker installation
@@ -90,7 +103,6 @@ pipeline {
     }
 
     post {
-        
         success {
             echo 'Build and Deployment Successful!'
         }
