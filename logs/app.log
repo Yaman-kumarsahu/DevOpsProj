@@ -132,3 +132,4 @@
 2025-03-11 23:07:27,523 - FlaskApp - INFO - fadsfa joined room VLKW
 2025-03-11 23:07:34,574 - FlaskApp - INFO - Message from fadsfa in room VLKW: adfa
 2025-03-11 23:08:00,670 - FlaskApp - ERROR - Room VLKW no longer exists, user will be disconnected
+2025-03-11 23:11:06,557 - FlaskApp - INFO - fadsfa has left room VLKW
