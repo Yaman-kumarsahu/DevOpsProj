@@ -31,20 +31,35 @@ pipeline {
             }
         }
 
-    //    stage('Run Tests') {
-    //        steps {
-    //            script {
-    //                echo "Running tests in the virtual environment"
-    //                try {
-    //                    sh '. venv/bin/activate && pytest tests/'
-    //                } catch (Exception e) {
-    //                    echo "Tests failed: ${e.getMessage()}"
-    //                    currentBuild.result = 'FAILURE'
-    //                    throw e
-    //                }
-    //            }
-    //         }
-    //     }
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests in the virtual environment"
+                    try {
+                        // Run pytest and generate the JUnit XML results
+                        sh '''
+                        . venv/bin/activate
+                        pytest --maxfail=1 --disable-warnings --maxfail=5 --junitxml=pytest-results.xml
+                        '''
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.getMessage()}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image..."
+                    sh '''
+                    docker build -t ${DOCKER_IMAGE} -f ${DOCKERFILE_PATH} .
+                    '''
+                }
+            }
+        }
     }
 
     post {
@@ -65,6 +80,11 @@ pipeline {
                 }
             }
             echo 'Build failed!'
+        }
+
+        always {
+            // Publish test results, even if the build fails or succeeds
+            junit '**/pytest-results.xml'
         }
     }
 }
