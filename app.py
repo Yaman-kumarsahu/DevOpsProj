@@ -8,11 +8,11 @@ It also includes logging functionality to track activities and errors.
 import logging
 import random
 from string import ascii_uppercase
+import time
 
 # Third-party imports
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import SocketIO, send, join_room, leave_room, emit  # Ensure 'emit' is imported
-import time
 
 # Initialize the rooms dictionary to store room information
 rooms = {}
@@ -162,46 +162,6 @@ def message(data):
     rooms[room]["messages"].append(content)
     logger.info("Message from %s in room %s: %s", session.get('name'), room, data['data'])
 
-# @socketio.on("connect")
-# def connect():
-
-#     """
-#     Handles a new connection from a user, ensuring they have a valid room and name.
-#     """
-
-#     room = session.get("room")
-#     name = session.get("name")
-#     if not room or not name:
-#         logger.warning("User connected without a valid room or name")
-#         return
-#     if room not in rooms:
-#         leave_room(room)
-#         logger.error("Room %s no longer exists, user will be disconnected", room)
-#         return
-
-#     join_room(room)
-#     send({"name": name, "message": "has entered the room"}, to=room)
-#     rooms[room]["members"] += 1
-#     logger.info("%s joined room %s", name, room)
-    
-
-# @socketio.on("disconnect")
-# def disconnect():
-#     """
-#     Handles a user's disconnection from the room, updating the room member count.
-#     """
-#     room = session.get("room")
-#     name = session.get("name")
-#     leave_room(room)
-
-#     if room in rooms:
-#         rooms[room]["members"] -= 1
-#         if rooms[room]["members"] <= 0:
-#             del rooms[room]
-#         logger.info("%s left room %s, members remaining: %d", name, room, rooms[room]["members"])
-
-#     send({"name": name, "message": "has left the room"}, to=room)
-#     logger.info("%s has left room %s", name, room)
 @socketio.on("connect")
 def connect():
     """
@@ -231,7 +191,7 @@ def connect():
 
     # Emit a real-time log message indicating the connection has started
     emit('log_update', {'log': f'{name} has entered room {room}. Real-time logs started...'})
-    
+
     # Start the background task to stream logs
     socketio.start_background_task(emit_logs)
 
@@ -243,7 +203,7 @@ def disconnect():
     """
     room = session.get("room")
     name = session.get("name")
-    
+
     if room:
         leave_room(room)
 
