@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Logs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .log-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f4f4f4;
+        }
+        .log-item {
+            padding: 5px;
+        }
+        .log-item.debug {
+            color: gray;
+        }
+        .log-item.info {
+            color: blue;
+        }
+        .log-item.warning {
+            color: orange;
+        }
+        .log-item.error {
+            color: red;
+        }
+        #filter {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Real-Time Logs</h1>
+    
+    <!-- Filter Section -->
+    <label for="filter">Filter Logs:</label>
+    <select id="filter">
+        <option value="all">All</option>
+        <option value="debug">Debug</option>
+        <option value="info">Info</option>
+        <option value="warning">Warning</option>
+        <option value="error">Error</option>
+    </select>
+    
+    <!-- Logs Container -->
+    <div class="log-container" id="logContainer"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.min.js"></script>
+    <script>
+        const socket = io();
+
+        const logContainer = document.getElementById("logContainer");
+        const filterSelect = document.getElementById("filter");
+
+        // Function to add a log message to the container
+        function addLog(logMessage) {
+            const logElement = document.createElement("div");
+            logElement.classList.add("log-item");
+            
+            // Determine the log level from the message (e.g., INFO, DEBUG, ERROR)
+            if (logMessage.includes("INFO")) {
+                logElement.classList.add("info");
+            } else if (logMessage.includes("DEBUG")) {
+                logElement.classList.add("debug");
+            } else if (logMessage.includes("WARNING")) {
+                logElement.classList.add("warning");
+            } else if (logMessage.includes("ERROR")) {
+                logElement.classList.add("error");
+            }
+
+            logElement.textContent = logMessage;
+            logContainer.appendChild(logElement);
+            logContainer.scrollTop = logContainer.scrollHeight;  // Auto-scroll to the latest log
+        }
+
+        // Listen for real-time log updates from Flask
+        socket.on('log_update', function(data) {
+            const logMessage = data.log;
+            const filter = filterSelect.value;
+            
+            // Filter logs based on selected log level
+            if (filter === "all" || logMessage.toLowerCase().includes(filter)) {
+                addLog(logMessage);
+            }
+        });
+
+        // Update log filter based on selection
+        filterSelect.addEventListener('change', function() {
+            const filter = filterSelect.value;
+            const logItems = document.querySelectorAll('.log-item');
+            logItems.forEach(logItem => {
+                if (filter === "all" || logItem.classList.contains(filter)) {
+                    logItem.style.display = 'block';
+                } else {
+                    logItem.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
