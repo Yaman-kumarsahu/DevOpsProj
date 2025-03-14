@@ -1,4 +1,5 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} 
+{% block content %}
 <div class="message-box">
   <h2 style="padding: 10px;">Chat Room: {{code}}</h2>
   <div class="messages" id="messages"></div>
@@ -15,6 +16,7 @@
     </button>
   </div>
 </div>
+
 <script type="text/javascript">
   var socketio = io();
 
@@ -44,9 +46,19 @@
     socketio.emit("message", { data: message.value });
     message.value = "";
   };
+
+  // Add event listener for the "Enter" key
+  document.getElementById("message").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent the default action (like form submission)
+      sendMessage(); // Call the sendMessage function
+    }
+  });
 </script>
+
 {% for msg in messages %}
 <script type="text/javascript">
   createMessage("{{msg.name}}", "{{msg.message}}");
 </script>
-{% endfor %} {% endblock %}
+{% endfor %}
+{% endblock %}
