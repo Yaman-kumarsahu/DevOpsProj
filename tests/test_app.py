@@ -46,7 +46,6 @@ def test_create_room(client):
     assert response.status_code == 200
     assert b'Chat Room' in response.data
 
-
 def test_join_existing_room(client):
     """Test joining an existing room"""
     # First, create a room
@@ -54,20 +53,40 @@ def test_join_existing_room(client):
         'name': 'John',
         'create': True
     })
+
+    # Now visit the room
     response = client.get('/room')
-    match = re.search(r'<h2>Chat Room: (.*?)</h2>', response.data.decode('utf-8'))
-    room_code = match.group(1)
-    application.rooms[room_code] = {"members": 0, "messages": []}
+
+    # Updated regex to match <h2> with style and extract room code
+    match = re.search(r'<h2 style="[^"]*">Chat Room: (\w+)</h2>', response.data.decode('utf-8'))
+
+    # Ensure that match is not None before trying to access group(1)
+    if match:
+        room_code = match.group(1)
+        print(f"Room code found: {room_code}")
+    else:
+        print("Room code not found in the response")
+        assert False, "Room code not found in the response"
     
+    # Ensure the room exists in the application state
+    application.rooms[room_code] = {"members": 0, "messages": []}
+
+    # Now have another user (Jane) join the room
     response = client.post('/', data={
         'name': 'Jane',
         'code': room_code,
         'join': True
     })
+
+    # Check if the response is a redirect (302 status code)
     assert response.status_code == 302  # Should redirect to /room
 
+    # Now visit the room again after Jane joins
     response = client.get('/room')
-    assert f'Chat Room: {room_code}'.encode() in response.data  # Check if the user's name appears in the room
+
+    # Ensure the room code is visible in the response data (verify the user's name)
+    assert f'Chat Room: {room_code}'.encode() in response.data  # Check if the room code appears
+
 
 def test_invalid_room_join(client):
     """Test attempting to join a non-existing room"""
