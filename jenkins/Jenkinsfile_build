@@ -25,6 +25,25 @@ pipeline {
             }
         }
 
+        stage('Run Tests') {
+            steps {
+                script {
+                    echo "Running tests in the virtual environment"
+                    try {
+                        // Run pytest and generate the JUnit XML results
+                        sh '''
+                        . venv/bin/activate
+                        pytest --maxfail=1 --disable-warnings --maxfail=5 --junitxml=pytest-results.xml
+                        '''
+                    } catch (Exception e) {
+                        echo "Tests failed: ${e.getMessage()}"
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
@@ -41,19 +60,6 @@ pipeline {
                 }
             }
         }
-        
-
-        // stage('Test Flask App') {
-        //     steps {
-        //         script {
-        //             // Run your tests inside the Docker container
-        //             // Assuming you have pytest installed in the container
-        //             docker.image(${DOCKER_IMAGE}).inside {
-        //                 sh 'pytest tests/*.py'
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Deploy to Production') {
             steps {
